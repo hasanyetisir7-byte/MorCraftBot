@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -6,127 +5,89 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MorCraftBot | Yönetim Paneli</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#0b0812;color:#f5efff;font-family:Arial,sans-serif}
-header{padding:22px 7%;background:#140d20;border-bottom:1px solid #39204f;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:23px;font-weight:bold;color:#c58aff}
-.logo span{color:white}
-main{max-width:1150px;margin:35px auto;padding:0 20px}
-h1{font-size:30px;margin-bottom:5px}
-.muted{color:#a99bb8}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:17px;margin:25px 0}
-.card{background:#171020;border:1px solid #39234e;border-radius:15px;padding:20px}
-.card h3{margin-top:0;color:#c58aff}
-.status{font-size:22px;font-weight:bold;margin:12px 0}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#f0a33b;margin-right:8px}
-button{border:0;border-radius:9px;padding:12px 17px;background:#8c42ce;color:white;font-weight:bold;cursor:pointer}
-button:hover{background:#a85be9}
-button:disabled{opacity:.45;cursor:not-allowed}
-.stop{background:#742d52}
-input{background:#0d0914;border:1px solid #49305d;color:white;padding:13px;border-radius:8px;width:100%;outline:none}
-.chat{height:310px;overflow:auto;background:#0d0914;border:1px solid #39234e;border-radius:10px;padding:14px;margin:12px 0}
-.message{padding:8px 0;border-bottom:1px solid #251a30;overflow-wrap:anywhere}
-.message b{color:#c58aff}
-.row{display:flex;gap:10px}
-.row input{flex:1;min-width:0}
-.small{font-size:13px;color:#a99bb8}
-#notice{padding:13px;border-radius:9px;background:#332513;color:#ffd99b;margin:20px 0}
-footer{text-align:center;padding:30px;color:#756982}
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0b0812;color:#f5efff;font-family:Arial,sans-serif}header{padding:20px 6%;background:#140d20;border-bottom:1px solid #39204f;display:flex;justify-content:space-between;align-items:center}.logo{font-size:23px;font-weight:bold;color:#c58aff}.logo span{color:white}main{max-width:1100px;margin:32px auto;padding:0 18px}h1{margin-bottom:6px}.muted,.small{color:#ad9dbb}.small{font-size:13px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin:22px 0}.card{background:#171020;border:1px solid #39234e;border-radius:14px;padding:19px;margin:15px 0}.card h3{margin-top:0;color:#c58aff}.status{font-size:22px;font-weight:bold;margin:12px 0}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#f0a33b;margin-right:8px}button{border:0;border-radius:8px;padding:11px 15px;background:#8c42ce;color:white;font-weight:bold;cursor:pointer}button:hover{background:#a85be9}button:disabled{opacity:.45;cursor:not-allowed}.stop{background:#742d52}.secondary{background:#453653}input{background:#0d0914;border:1px solid #49305d;color:white;padding:12px;border-radius:8px;width:100%;min-width:0}.row{display:flex;gap:9px;align-items:center}.row input{flex:1}.chat{height:300px;overflow:auto;background:#0d0914;border:1px solid #39234e;border-radius:9px;padding:12px;margin:12px 0}.message{padding:7px 0;border-bottom:1px solid #251a30;overflow-wrap:anywhere}.message b{color:#c58aff}.hidden{display:none!important}.notice{padding:12px;border-radius:8px;background:#302316;color:#ffdda3;margin:15px 0}.success{background:#17301f;color:#baf3c8}.error{background:#3a1722;color:#ffc2d0}#players{overflow-wrap:anywhere;line-height:1.8}label{display:block;margin:10px 0 6px;color:#cdb9dc}footer{text-align:center;padding:28px;color:#756982}@media(max-width:550px){header{padding:16px 5%}.row{flex-wrap:wrap}.row button{flex:1}}
 </style>
 </head>
 <body>
-<header>
- <div class="logo">MORCRAFT<span>BOT</span></div>
- <div class="small">Yönetim Paneli</div>
-</header>
-
+<header><div class="logo">MORCRAFT<span>BOT</span></div><div class="small">Özel Yönetim Paneli</div></header>
 <main>
- <h1>Sunucu Kontrol Merkezi</h1>
- <div class="muted">MorCraft SMP bot yönetimi</div>
+<h1>MorCraft SMP Kontrol Merkezi</h1><div class="muted">Bot ve sohbet yönetimi</div>
+<div id="notice" class="notice">Önce arka uç adresini girip yönetici girişi yap.</div>
 
- <div id="notice">
-   ⚠️ Bot sunucusu henüz bağlanmadı. Bu panel tek başına botu çalıştırmaz.
- </div>
+<section id="loginCard" class="card">
+<h3>Yönetici Girişi</h3>
+<label for="apiBase">Arka uç adresi (Render servis URL'si)</label>
+<input id="apiBase" type="url" placeholder="https://morcraftbot-api.onrender.com">
+<label for="password">Yönetici şifresi</label>
+<input id="password" type="password" autocomplete="current-password" placeholder="Sunucu ortam değişkenindeki ADMIN_PASSWORD">
+<div class="row" style="margin-top:13px"><button id="loginBtn">Giriş yap</button></div>
+<p class="small">Şifren GitHub dosyalarına yazılmaz. Yalnızca güvenli arka uç ortam değişkeninde tutulmalıdır.</p>
+</section>
 
- <div class="grid">
-  <div class="card">
-   <h3>Bot Durumu</h3>
-   <div class="status"><span class="dot"></span><span id="botStatus">Bağlantı bekleniyor</span></div>
-   <div class="small" id="lastCheck">Henüz sunucuya ulaşılamadı.</div>
-  </div>
-  <div class="card">
-   <h3>Minecraft Sunucusu</h3>
-   <div class="status">MorCraft SMP</div>
-   <div class="small">MorCraftSmp.aternos.me:64006</div>
-  </div>
-  <div class="card">
-   <h3>Oyuncular</h3>
-   <div class="status" id="playerCount">—</div>
-   <div class="small">Çevrimiçi oyuncu sayısı</div>
-  </div>
- </div>
-
- <div class="card">
-  <h3>Bot Kontrolleri</h3>
-  <p class="small">Bu düğmeler, arka uç sunucusu kurulduktan sonra etkinleşecek.</p>
-  <div class="row">
-   <button id="startBtn" disabled>▶ Botu Başlat</button>
-   <button id="stopBtn" class="stop" disabled>■ Botu Durdur</button>
-  </div>
- </div>
-
- <div class="card" style="margin-top:18px">
-  <h3>Canlı Minecraft Sohbeti</h3>
-  <div class="chat" id="chat">
-   <div class="message"><b>Sistem:</b> Sohbet bağlantısı bekleniyor.</div>
-  </div>
-  <div class="row">
-   <input id="chatInput" placeholder="Sunucuya mesaj yaz..." disabled>
-   <button id="sendBtn" disabled>Gönder</button>
-  </div>
- </div>
-
- <div class="card" style="margin-top:18px">
-  <h3>Çevrimiçi Oyuncular</h3>
-  <div id="players" class="muted">Oyuncu bilgileri henüz alınamıyor.</div>
- </div>
-
- <footer>MorCraftBot • MorCraft SMP</footer>
+<section id="dashboard" class="hidden">
+<div class="row"><button id="logoutBtn" class="secondary">Güvenli çıkış</button><button id="refreshBtn" class="secondary">Durumu yenile</button></div>
+<div class="grid">
+<div class="card"><h3>Bot durumu</h3><div class="status"><span class="dot" id="statusDot"></span><span id="botStatus">Bilinmiyor</span></div><div class="small" id="lastError">Henüz kontrol edilmedi.</div></div>
+<div class="card"><h3>Minecraft sunucusu</h3><div class="status">MorCraft SMP</div><div class="small">MorCraftSmp.aternos.me:64006</div></div>
+<div class="card"><h3>Oyuncular</h3><div class="status" id="playerCount">—</div><div class="small">Botun gördüğü oyuncular</div></div>
+</div>
+<div class="card"><h3>Bot kontrolleri</h3><div class="row"><button id="startBtn">▶ Botu başlat</button><button id="stopBtn" class="stop">■ Botu durdur</button></div><p class="small">Başlatma, arka uçta bağlantı denemesi yapar. Aternos kapalıysa bot bağlanamaz.</p></div>
+<div class="card"><h3>Canlı Minecraft sohbeti</h3><div id="chat" class="chat"><div class="message">Sohbet yükleniyor...</div></div><div class="row"><input id="chatInput" maxlength="200" placeholder="Sunucuya mesaj yaz..."><button id="sendBtn">Gönder</button></div></div>
+<div class="card"><h3>Çevrimiçi oyuncular</h3><div id="players" class="muted">Oyuncu listesi bekleniyor.</div></div>
+<div class="card"><h3>Oyuncu moderasyonu</h3><label for="kickPlayer">Oyuncu adı</label><input id="kickPlayer" maxlength="16" placeholder="Minecraft oyuncu adı"><label for="kickReason">Sebep</label><input id="kickReason" maxlength="80" placeholder="Yönetici kararı"><div style="margin-top:12px"><button id="kickBtn" class="stop">Kick komutunu gönder</button></div><p class="small">Bu işlem yalnızca botun sunucuda /kick komutunu kullanma yetkisi varsa çalışır. Ban/OP gibi yetkiler bu panelde açılmamıştır.</p></div>
+</section>
+<footer>MorCraftBot • MorCraft SMP</footer>
 </main>
-
 <script>
-/*
-  Güvenlik:
-  Yönetici şifresi bu dosyaya yazılmayacak.
-  Bot kontrolü ve giriş doğrulaması güvenli arka uçta yapılacak.
-*/
-const API_BASE = ""; // Arka uç hazır olduğunda adresi buraya bağlayacağız.
-
-async function refreshStatus(){
-  if(!API_BASE){
-    document.getElementById("lastCheck").textContent =
-      "Arka uç kurulmadı. Bot henüz bağlı değil.";
-    return;
-  }
-  try{
-    const response = await fetch(API_BASE + "/api/status");
-    if(!response.ok) throw new Error("Bağlantı kurulamadı");
-    const data = await response.json();
-    document.getElementById("botStatus").textContent =
-      data.botOnline ? "Çevrimiçi" : "Çevrimdışı";
-    document.getElementById("playerCount").textContent =
-      data.playerCount ?? 0;
-    document.getElementById("lastCheck").textContent =
-      "Son kontrol: " + new Date().toLocaleTimeString("tr-TR");
-    document.getElementById("players").textContent =
-      (data.players || []).join(", ") || "Çevrimiçi oyuncu yok.";
-  }catch(error){
-    document.getElementById("lastCheck").textContent =
-      "Arka uç bağlantısı başarısız.";
-  }
+const $=id=>document.getElementById(id);
+let apiBase=localStorage.getItem("morcraft_api")||"";
+let token=sessionStorage.getItem("morcraft_token")||"";
+let chatCount=0, poller=null;
+$("apiBase").value=apiBase;
+function notify(message,type=""){ $("notice").textContent=message;$("notice").className="notice "+type; }
+function base(){return $("apiBase").value.trim().replace(/\/+$/,"");}
+async function api(path,method="GET",body){
+ const response=await fetch(base()+path,{method,headers:{"Content-Type":"application/json",...(token?{Authorization:"Bearer "+token}:{})},...(body?{body:JSON.stringify(body)}:{})});
+ const data=await response.json().catch(()=>({error:"Sunucudan geçersiz yanıt alındı."}));
+ if(!response.ok)throw new Error(data.error||"İstek başarısız ("+response.status+")");
+ return data;
 }
-refreshStatus();
-setInterval(refreshStatus,10000);
+function showDashboard(){ $("loginCard").classList.add("hidden");$("dashboard").classList.remove("hidden"); }
+function showLogin(){ $("dashboard").classList.add("hidden");$("loginCard").classList.remove("hidden");if(poller)clearInterval(poller); }
+async function login(){
+ apiBase=base();
+ if(!apiBase){notify("Önce arka uç adresini gir.","error");return;}
+ if(!/^https:\/\//i.test(apiBase)){notify("Arka uç adresi https:// ile başlamalı.","error");return;}
+ $("loginBtn").disabled=true;
+ try{localStorage.setItem("morcraft_api",apiBase);const data=await api("/api/login","POST",{password:$("password").value});token=data.token;sessionStorage.setItem("morcraft_token",token);$("password").value="";showDashboard();notify("Giriş başarılı. Panel arka uca bağlandı.","success");await refreshAll();poller=setInterval(refreshAll,5000);}
+ catch(e){notify(e.message,"error");}
+ finally{$("loginBtn").disabled=false;}
+}
+async function refreshAll(){
+ try{
+  const s=await api("/api/status");
+  $("botStatus").textContent=s.botOnline?"Çevrimiçi":s.connecting?"Bağlanıyor":"Çevrimdışı";
+  $("statusDot").style.background=s.botOnline?"#54d889":s.connecting?"#f0a33b":"#e45d75";
+  $("playerCount").textContent=s.playerCount;
+  $("players").textContent=s.players.length?s.players.join(" • "):"Çevrimiçi oyuncu görünmüyor.";
+  $("lastError").textContent=s.lastError||"Son hata yok.";
+  const c=await api("/api/chat?since=0");
+  const msgs=c.messages||[];
+  if(msgs.length!==chatCount){chatCount=msgs.length;$("chat").replaceChildren();for(const m of msgs){const div=document.createElement("div");div.className="message";const b=document.createElement("b");b.textContent="["+new Date(m.time).toLocaleTimeString("tr-TR")+"] "+m.username+": ";div.append(b,document.createTextNode(m.message));$("chat").append(div);} $("chat").scrollTop=$("chat").scrollHeight;}
+ }catch(e){notify(e.message,"error");if(e.message.includes("Oturum")){token="";sessionStorage.removeItem("morcraft_token");showLogin();}}
+}
+async function action(path){try{const d=await api(path,"POST");notify(d.message||"İşlem gönderildi.","success");await refreshAll();}catch(e){notify(e.message,"error");}}
+$("loginBtn").addEventListener("click",login);
+$("password").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
+$("apiBase").addEventListener("change",()=>localStorage.setItem("morcraft_api",base()));
+$("logoutBtn").addEventListener("click",async()=>{try{await api("/api/logout","POST");}catch{}token="";sessionStorage.removeItem("morcraft_token");showLogin();notify("Oturum kapatıldı.");});
+$("refreshBtn").addEventListener("click",refreshAll);
+$("startBtn").addEventListener("click",()=>action("/api/bot/start"));
+$("stopBtn").addEventListener("click",()=>action("/api/bot/stop"));
+$("sendBtn").addEventListener("click",async()=>{const message=$("chatInput").value.trim();if(!message)return;try{await api("/api/chat","POST",{message});$("chatInput").value="";notify("Mesaj gönderildi.","success");await refreshAll();}catch(e){notify(e.message,"error");}});
+$("chatInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("sendBtn").click();});
+$("kickBtn").addEventListener("click",async()=>{const player=$("kickPlayer").value.trim();if(!player)return notify("Oyuncu adını yaz.","error");if(!confirm(player+" oyuncusu için kick komutu gönderilsin mi?"))return;try{const d=await api("/api/kick","POST",{player,reason:$("kickReason").value.trim()});notify(d.note||"Komut gönderildi.","success");}catch(e){notify(e.message,"error");}});
+if(token){showDashboard();refreshAll().then(()=>{poller=setInterval(refreshAll,5000);}).catch(()=>{token="";sessionStorage.removeItem("morcraft_token");showLogin();});}
 </script>
 </body>
 </html>
