@@ -33,7 +33,6 @@ const MAX_CHAT = 100;
 let bot = null;
 let connecting = false;
 let reconnectTimer = null;
-let reconnectDelay = 15000;
 let connectedAt = 0;
 let stoppedByAdmin = false;
 let lastError = null;
@@ -61,11 +60,11 @@ function requireAuth(req, res, next) {
   next();
 }
 
-function scheduleReconnect(minDelay = 0) {
+function scheduleReconnect() {
   if (stoppedByAdmin || reconnectTimer) return;
-  const delay = Math.max(reconnectDelay, minDelay);
-  reconnectDelay = Math.min(Math.max(reconnectDelay * 2, 15000), 300000);
-  addLog("Sistem", "Yeniden bağlanmadan önce " + Math.ceil(delay / 1000) + " saniye beklenecek.");
+  // Aternos can reject rapid login attempts; use a steady 15-second retry.
+  const delay = 15000;
+  addLog("Sistem", "Yeniden bağlanma 15 saniye sonra denenecek.");
   reconnectTimer = setTimeout(() => {
     reconnectTimer = null;
     connectBot();
@@ -122,12 +121,8 @@ function connectBot() {
   newBot.once("end", () => {
     if (bot === newBot) bot = null;
     connecting = false;
-    if (connectedAt && Date.now() - connectedAt >= 120000) {
-      reconnectDelay = 15000;
-    }
     connectedAt = 0;
     addLog("Sistem", "Bot bağlantısı kapandı.");
-    // Kısa aralıklarla başarısız olan bağlantılarda bekleme süresini artır.
     scheduleReconnect();
   });
 }
