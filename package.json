@@ -1,0 +1,15 @@
+
+{
+  "name": "morcraftbot",
+  "version": "1.0.0",
+  "description": "MorCraft SMP Minecraft Bot",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "mineflayer": "^4.33.0",
+    "express": "^5.1.0",
+    "cors": "^2.8.5"
+  }
+}
