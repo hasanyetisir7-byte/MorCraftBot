@@ -84,7 +84,6 @@ function connectBot() {
       port: MC_PORT,
       username: BOT_USERNAME,
       auth: "offline",
-      version: "26.3"
     });
     bot = newBot;
   } catch (error) {
