@@ -1,4 +1,4 @@
-const mineflayer = require("mineflayer");
+const mineflayer = require("@wp2508/mineflayer");
 const express = require("express");
 const cors = require("cors");
 const crypto = require("node:crypto");
