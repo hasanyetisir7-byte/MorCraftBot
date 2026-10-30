@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MorCraftBot | Yönetim Paneli</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b0812;color:#f5efff;font-family:Arial,sans-serif}
+header{padding:22px 7%;background:#140d20;border-bottom:1px solid #39204f;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:23px;font-weight:bold;color:#c58aff}
+.logo span{color:white}
+main{max-width:1150px;margin:35px auto;padding:0 20px}
+h1{font-size:30px;margin-bottom:5px}
+.muted{color:#a99bb8}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:17px;margin:25px 0}
+.card{background:#171020;border:1px solid #39234e;border-radius:15px;padding:20px}
+.card h3{margin-top:0;color:#c58aff}
+.status{font-size:22px;font-weight:bold;margin:12px 0}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#f0a33b;margin-right:8px}
+button{border:0;border-radius:9px;padding:12px 17px;background:#8c42ce;color:white;font-weight:bold;cursor:pointer}
+button:hover{background:#a85be9}
+button:disabled{opacity:.45;cursor:not-allowed}
+.stop{background:#742d52}
+input{background:#0d0914;border:1px solid #49305d;color:white;padding:13px;border-radius:8px;width:100%;outline:none}
+.chat{height:310px;overflow:auto;background:#0d0914;border:1px solid #39234e;border-radius:10px;padding:14px;margin:12px 0}
+.message{padding:8px 0;border-bottom:1px solid #251a30;overflow-wrap:anywhere}
+.message b{color:#c58aff}
+.row{display:flex;gap:10px}
+.row input{flex:1;min-width:0}
+.small{font-size:13px;color:#a99bb8}
+#notice{padding:13px;border-radius:9px;background:#332513;color:#ffd99b;margin:20px 0}
+footer{text-align:center;padding:30px;color:#756982}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">MORCRAFT<span>BOT</span></div>
+ <div class="small">Yönetim Paneli</div>
+</header>
+
+<main>
+ <h1>Sunucu Kontrol Merkezi</h1>
+ <div class="muted">MorCraft SMP bot yönetimi</div>
+
+ <div id="notice">
+   ⚠️ Bot sunucusu henüz bağlanmadı. Bu panel tek başına botu çalıştırmaz.
+ </div>
+
+ <div class="grid">
+  <div class="card">
+   <h3>Bot Durumu</h3>
+   <div class="status"><span class="dot"></span><span id="botStatus">Bağlantı bekleniyor</span></div>
+   <div class="small" id="lastCheck">Henüz sunucuya ulaşılamadı.</div>
+  </div>
+  <div class="card">
+   <h3>Minecraft Sunucusu</h3>
+   <div class="status">MorCraft SMP</div>
+   <div class="small">MorCraftSmp.aternos.me:64006</div>
+  </div>
+  <div class="card">
+   <h3>Oyuncular</h3>
+   <div class="status" id="playerCount">—</div>
+   <div class="small">Çevrimiçi oyuncu sayısı</div>
+  </div>
+ </div>
+
+ <div class="card">
+  <h3>Bot Kontrolleri</h3>
+  <p class="small">Bu düğmeler, arka uç sunucusu kurulduktan sonra etkinleşecek.</p>
+  <div class="row">
+   <button id="startBtn" disabled>▶ Botu Başlat</button>
+   <button id="stopBtn" class="stop" disabled>■ Botu Durdur</button>
+  </div>
+ </div>
+
+ <div class="card" style="margin-top:18px">
+  <h3>Canlı Minecraft Sohbeti</h3>
+  <div class="chat" id="chat">
+   <div class="message"><b>Sistem:</b> Sohbet bağlantısı bekleniyor.</div>
+  </div>
+  <div class="row">
+   <input id="chatInput" placeholder="Sunucuya mesaj yaz..." disabled>
+   <button id="sendBtn" disabled>Gönder</button>
+  </div>
+ </div>
+
+ <div class="card" style="margin-top:18px">
+  <h3>Çevrimiçi Oyuncular</h3>
+  <div id="players" class="muted">Oyuncu bilgileri henüz alınamıyor.</div>
+ </div>
+
+ <footer>MorCraftBot • MorCraft SMP</footer>
+</main>
+
+<script>
+/*
+  Güvenlik:
+  Yönetici şifresi bu dosyaya yazılmayacak.
+  Bot kontrolü ve giriş doğrulaması güvenli arka uçta yapılacak.
+*/
+const API_BASE = ""; // Arka uç hazır olduğunda adresi buraya bağlayacağız.
+
+async function refreshStatus(){
+  if(!API_BASE){
+    document.getElementById("lastCheck").textContent =
+      "Arka uç kurulmadı. Bot henüz bağlı değil.";
+    return;
+  }
+  try{
+    const response = await fetch(API_BASE + "/api/status");
+    if(!response.ok) throw new Error("Bağlantı kurulamadı");
+    const data = await response.json();
+    document.getElementById("botStatus").textContent =
+      data.botOnline ? "Çevrimiçi" : "Çevrimdışı";
+    document.getElementById("playerCount").textContent =
+      data.playerCount ?? 0;
+    document.getElementById("lastCheck").textContent =
+      "Son kontrol: " + new Date().toLocaleTimeString("tr-TR");
+    document.getElementById("players").textContent =
+      (data.players || []).join(", ") || "Çevrimiçi oyuncu yok.";
+  }catch(error){
+    document.getElementById("lastCheck").textContent =
+      "Arka uç bağlantısı başarısız.";
+  }
+}
+refreshStatus();
+setInterval(refreshStatus,10000);
+</script>
+</body>
+</html>
