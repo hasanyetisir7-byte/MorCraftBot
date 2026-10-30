@@ -27,6 +27,7 @@ app.use(cors({
 }));
 
 const sessions = new Map();
+const loginAttempts = new Map();
 const chatHistory = [];
 const MAX_CHAT = 100;
 let bot = null;
@@ -36,7 +37,7 @@ let stoppedByAdmin = false;
 let lastError = null;
 
 function addLog(username, message) {
-  chatHistory.push({ username, message: String(message), time: new Date().toISOString() });
+  chatHistory.push({ username, message: String(message).slice(0, 300), time: new Date().toISOString() });
   if (chatHistory.length > MAX_CHAT) chatHistory.shift();
 }
 
@@ -52,7 +53,7 @@ function requireAuth(req, res, next) {
   const expires = sessions.get(token);
   if (!expires || expires < Date.now()) {
     sessions.delete(token);
-    return res.status(401).json({ error: "Oturum geçersiz veya süresi dolmuş." });
+    return res.status(401).json({ error: "Oturum geçersiz veya süresi dolmuş. Yeniden giriş yap." });
   }
   req.sessionToken = token;
   next();
@@ -122,12 +123,28 @@ function connectBot() {
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
 app.post("/api/login", (req, res) => {
+  const ip = req.ip || "unknown";
+  const attempt = loginAttempts.get(ip) || { count: 0, until: 0 };
+  if (attempt.until > Date.now()) {
+    return res.status(429).json({ error: "Çok fazla deneme. Birkaç dakika sonra tekrar dene." });
+  }
+
   const password = req.body && req.body.password;
-  if (typeof password !== "string" ||
-      Buffer.byteLength(password) !== Buffer.byteLength(ADMIN_PASSWORD) ||
-      !crypto.timingSafeEqual(Buffer.from(password), Buffer.from(ADMIN_PASSWORD))) {
+  const valid = typeof password === "string" &&
+    Buffer.byteLength(password) === Buffer.byteLength(ADMIN_PASSWORD) &&
+    crypto.timingSafeEqual(Buffer.from(password), Buffer.from(ADMIN_PASSWORD));
+
+  if (!valid) {
+    attempt.count += 1;
+    if (attempt.count >= 5) {
+      attempt.count = 0;
+      attempt.until = Date.now() + 5 * 60 * 1000;
+    }
+    loginAttempts.set(ip, attempt);
     return res.status(401).json({ error: "Şifre yanlış." });
   }
+
+  loginAttempts.delete(ip);
   return res.json({ token: createSession(), expiresIn: 43200 });
 });
 
@@ -181,6 +198,18 @@ app.post("/api/bot/stop", requireAuth, (_req, res) => {
   connecting = false;
   addLog("Sistem", "Bot yönetici tarafından durduruldu.");
   res.json({ ok: true });
+});
+
+app.post("/api/kick", requireAuth, (req, res) => {
+  const player = typeof req.body.player === "string" ? req.body.player.trim() : "";
+  const reason = typeof req.body.reason === "string" ? req.body.reason.trim().slice(0, 80) : "Yönetici kararı";
+  if (!/^[A-Za-z0-9_]{1,16}$/.test(player)) {
+    return res.status(400).json({ error: "Geçerli bir Minecraft oyuncu adı gir." });
+  }
+  if (!bot || !bot.player) return res.status(409).json({ error: "Bot sunucuya bağlı değil." });
+  bot.chat("/kick " + player + " " + reason);
+  addLog("Sistem", "Kick komutu gönderildi: " + player + ". Botun yetkisi yoksa komut uygulanmaz.");
+  res.json({ ok: true, note: "Komut gönderildi. Botun sunucuda gerekli yetkisi olmalı." });
 });
 
 app.listen(PORT, () => {
