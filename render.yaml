@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: morcraftbot-api
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ALLOWED_ORIGIN
+        value: https://hasanyetisir7-byte.github.io
+      - key: MC_HOST
+        value: MorCraftSmp.aternos.me
+      - key: MC_PORT
+        value: "64006"
+      - key: BOT_USERNAME
+        value: MorCraftBot
