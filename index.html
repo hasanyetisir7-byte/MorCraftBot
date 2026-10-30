@@ -40,7 +40,7 @@
 </main>
 <script>
 const $=id=>document.getElementById(id);
-let apiBase=localStorage.getItem("morcraft_api")||"";
+let apiBase=localStorage.getItem("morcraft_api")||"https://morcraftbot-api.onrender.com";
 let token=sessionStorage.getItem("morcraft_token")||"";
 let chatCount=0, poller=null;
 $("apiBase").value=apiBase;
